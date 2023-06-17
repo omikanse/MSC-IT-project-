@@ -1,0 +1,800 @@
+from PyQt5 import QtCore, QtGui, QtWidgets
+import cv2
+import mediapipe as mp
+import pyautogui
+import time
+from time import sleep
+import numpy as np
+import cvzone
+from pynput.keyboard import Controller
+
+
+#created by Omkar_Kanse
+drawing = mp.solutions.drawing_utils
+hands=mp.solutions.hands
+keyboard=Controller ()
+class Ui_Window_media_program(object):
+    def setupUi(self,CameraWindow): 
+        def count_fingers(lst):
+            cnt = 0
+            thresh = (lst.landmark[0].y*100 - lst.landmark[9].y*100)/2
+
+            if (lst.landmark[5].y*100 - lst.landmark[8].y*100) > thresh:
+                cnt += 1
+ 
+            if (lst.landmark[9].y*100 - lst.landmark[12].y*100) > thresh:
+                cnt += 1
+#created by Omkar_Kanse
+            if (lst.landmark[13].y*100 - lst.landmark[16].y*100) > thresh:
+                cnt += 1
+
+            if (lst.landmark[17].y*100 - lst.landmark[20].y*100) > thresh:
+                cnt += 1
+#created by Omkar_Kanse
+            if (lst.landmark[5].x*100 - lst.landmark[4].x*100) > 6:
+                cnt += 1
+
+            return cnt
+
+        
+
+
+        def move_cursor(hand_keyPoints):
+            #def move_cursor(hand_keyPoints_left, hand_keyPoints_right):
+            x= hand_keyPoints.landmark[4].x*2000
+            y= hand_keyPoints.landmark[8].y*2000#created by Omkar_Kanse
+            #x_left = hand_keyPoints_left.landmark[4].x * 640
+            #y_left = hand_keyPoints_left.landmark[8].y * 480
+#created by Omkar_Kanse
+            #x_right = hand_keyPoints_right.landmark[4].x * 640
+            #y_right = hand_keyPoints_right.landmark[8].y * 480
+#created by Omkar_Kanse
+            #x = (x_left + x_right) / 2
+            #y = (y_left + y_right) / 2
+
+            pyautogui.moveTo(x, y, duration=0)
+
+        self=cv2.VideoCapture(0)  #create object 
+        #drawing = mp.solutions.drawing_utils
+        #hands = mp.solutions.hands
+        hand_obj = hands.Hands(max_num_hands=1,min_detection_confidence=0.5,min_tracking_confidence=0.5)
+        
+        #hand_obj2= hands.Hands(max_num_hands=2)
+        
+        class Button:
+            def __init__(self,text,pos):
+                self.text=text#created by Omkar_Kanse
+                self.pos=pos#created by Omkar_Kanse
+
+            def draw(self,CameraWindow):
+                #1column
+                height,width=480,640
+                background=np.zeros((height,width,4),dtype=np.uint8)
+
+                #draw a transparent blue rectangle
+                cv2.rectangle (background, (220,300) , (260,340) , (255, 0, 0) , cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText(CameraWindow,"1",(228,330),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),4)
+                cv2.rectangle (background, (220,360) , (260,400) , (255,0,255) , cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "Q", (228,390) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255),4)
+                cv2.rectangle (background, (220,420) , (260,460), (255,0, 255) , cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "A", (228,450) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+                cv2.rectangle (background, (220,480), (260, 520), (255,0,255),cv2.FILLED)
+                cv2.putText (CameraWindow , "Z" , (228,510) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255,255) , 4)
+#created by Omkar_Kanse
+                #2column
+                cv2. rectangle (background, (290,300), (330,340) , (255, 0, 0) ,cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "2", (298,330) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255, 255) ,4)
+                cv2. rectangle (background , (290,360), (330, 400), (255,0,255) , cv2.FILLED)
+                cv2.putText (CameraWindow, "W", (298,390) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255, 255) ,4)#created by Omkar_Kanse
+                cv2. rectangle (background, (290,420) , (330,460) , (255,0,255), cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "S" , (298,450) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255,255) ,4)
+                cv2. rectangle (background, (290,480) , (330, 520) , (255,0,255),cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "X" , (298,510) ,cv2.FONT_HERSHEY_SIMPLEX,1, (255,255, 255) ,4)#created by Omkar_Kanse
+#created by Omkar_Kanse
+                #3column
+                cv2. rectangle (background, (360,300) , (400,340), (255, 0, 0),cv2. FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow , "3", (368, 330) ,cv2.FONT_HERSHEY_SIMPLEX,1, (255,255,255) ,4)
+                cv2. rectangle (background, (360,360), (400,400) , (255,0,255), cv2.FILLED)#created by Omkar_Kanse
+                cv2. putText (CameraWindow, "E", (368, 390) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255) ,4)#created by Omkar_Kanse
+                cv2. rectangle (background, (360,420), (400,460) , (255, 0,255),cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "D", (368,450) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255) ,4)
+                cv2. rectangle (background, (360,480) , (400, 520), (255,0,255) , cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "C", (368,510) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255) ,4)#created by Omkar_Kanse
+#created by Omkar_Kanse
+                #4column
+                cv2. rectangle (background, (430,300) , (470,340), (255, 0, 0),cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "4", (438,330), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255,255) ,4)
+                cv2.rectangle (background, (430,360) , (470,400), (255,0,255) , cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "R", (438,390) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255),4)
+                cv2. rectangle (background, (430,420) , (470,460), (255,0,255) ,cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "E", (438,450),cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255) , 4)
+                cv2. rectangle (background, (430,480), (470,520), (255,0,255) , cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "V", (438,510),cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255, 255) , 4)
+
+#created by Omkar_Kanse
+                #5column
+                cv2.rectangle (background, (500,300), (540,340), (255, 0, 0) ,cv2.FILLED)
+                cv2.putText (CameraWindow, "5" , (508, 330) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255,255),4)
+                cv2.rectangle (background, (500,360) , (540,400), (255,0,255) ,cv2.FILLED)
+                cv2.putText (CameraWindow, "T" , (508,390) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255),4)
+                cv2.rectangle (background, (500,420), (540,460), (255,0,255), cv2.FILLED)
+                cv2.putText (CameraWindow, "G", (508,450), cv2.FONT_HERSHEY_SIMPLEX,1, (255,255, 255) ,4)
+                cv2.rectangle (background, (500,480), (540, 520), (255,0,255) , cv2.FILLED)
+                cv2.putText (CameraWindow, "B", (508,510) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255, 255),4)
+
+
+                #6column
+                cv2.rectangle (background, (570,300), (610,340), (255, 0, 0),cv2. FILLED)
+                cv2.putText(CameraWindow, "6", (578,330), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255, 255) ,4)
+                cv2.rectangle (background, (570,360), (610,400), (255, 0,255) ,cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "Y", (578,390) ,cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255, 255),4)
+                cv2.rectangle (background, (570, 420), (610,460), (255,0,255) ,cv2.FILLED)
+                cv2.putText (CameraWindow, "H", (578, 450),cv2.FONT_HERSHEY_SIMPLEX,1, (255,255, 255) ,4)
+                cv2.rectangle (background, (570, 480), (610, 520), (255,0,255) , cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "N", (578,510) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) , 4)
+
+                #7column
+                cv2.rectangle (background, (640,300), (680,340), (255, 0, 0) , cv2.FILLED)
+                cv2.putText (CameraWindow, "7", (648,330), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 4)
+                cv2.rectangle (background, (640,360), (680,400), (255,0,255) ,cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "U'", (648,390), cv2.FONT_HERSHEY_SIMPLEX,1, (255,255, 255) ,4)
+                cv2.rectangle (background, (640,420) , (680,460) , (255, 0,255),cv2. FILLED)
+                cv2 .putText (CameraWindow, "J", (648,450) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+                cv2.rectangle (background, (640,480), (680,520) , (255,0,255),cv2. FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "M", (648, 510), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+
+#created by Omkar_Kanse
+                #8column
+                cv2.rectangle (background, (710,300), (750,340), (255, 0, 0) , cv2.FILLED)
+                cv2.putText (CameraWindow, "8", (718,330), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 4)
+                cv2.rectangle (background, (710,360), (750,400), (255,0,255) ,cv2.FILLED)
+                cv2.putText (CameraWindow, "I", (718,390), cv2.FONT_HERSHEY_SIMPLEX,1, (255,255, 255) ,4)
+                cv2.rectangle (background, (710,420) , (750,460) , (255, 0,255),cv2. FILLED)#created by Omkar_Kanse
+                cv2 .putText (CameraWindow, "K", (718,450) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+                cv2.rectangle (background, (710,480), (750,520) , (255,0,255),cv2. FILLED)
+                cv2.putText (CameraWindow, ",", (718, 510), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+
+#created by Omkar_Kanse
+                #9column
+                cv2.rectangle (background, (780,300), (820,340), (255, 0, 0) , cv2.FILLED)
+                cv2.putText (CameraWindow, "9", (788,330), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 4)
+                cv2.rectangle (background, (780,360), (820,400), (255,0,255) ,cv2.FILLED)
+                cv2.putText (CameraWindow, "O", (788,390), cv2.FONT_HERSHEY_SIMPLEX,1, (255,255, 255) ,4)
+                cv2.rectangle (background, (780,420) , (820,460) , (255, 0,255),cv2. FILLED)
+                cv2 .putText (CameraWindow, "L", (788,450) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+                cv2.rectangle (background, (780,480), (820,520) , (255,0,255),cv2. FILLED)
+                cv2.putText (CameraWindow, ".", (788, 510), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+
+
+                #10column
+                cv2.rectangle (background, (850,300), (890,340), (255, 0, 0) , cv2.FILLED)
+                cv2.putText (CameraWindow, "0", (858,330), cv2. FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 4)
+                cv2.rectangle (background, (850,360), (890,400), (255,0,255) ,cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "P", (858,390), cv2. FONT_HERSHEY_SIMPLEX,1, (255,255, 255) ,4)
+                cv2.rectangle (background, (850,420) , (890,460) , (255, 0,255),cv2. FILLED)
+                cv2 .putText (CameraWindow, ";", (858,450) , cv2. FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+                cv2.rectangle (background, (850,480), (890,520) , (255,0,255),cv2. FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "/", (858, 510), cv2. FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+
+
+                #space, caps-l, backspace ,enter rectangle
+                cv2.rectangle (background, (220,540), (350, 580), (255,0,255) , cv2.FILLED)
+                cv2.putText (CameraWindow, "Caps-L", (228, 570) , cv2. FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+                cv2.rectangle (background, (370 , 540), (500,580), (255,0,255) , cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "SPACE", (378,570) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) , 4)
+                cv2.rectangle (background, (520,540), (650, 580), (255,0, 255),cv2.FILLED)
+                cv2.putText (CameraWindow, "B-Sp", (528, 570) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255, 255),4)
+                cv2.rectangle (background, (670,540) , (800, 580), (255,0, 255), cv2.FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "ENTER" , (678,570) , cv2. FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255) ,4)
+
+
+                #4 Button up, down, left, right
+                cv2.rectangle (background, (980,360) , (1010,400), (255, 0, 0) , cv2.FILLED)
+                cv2.putText (CameraWindow, "UP", (988,390) , cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255, 255),4)
+                cv2.rectangle (background, (980,480) , (1010,520), (255, 0, 0) , cv2. FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "DOWN", (988,510) ,cv2. FONT_HERSHEY_SIMPLEX, 1, (255,255, 255) , 4)
+                cv2. rectangle (background, (910,420) , (950,460) , (255, 0, 0) , cv2.FILLED)
+                cv2.putText (CameraWindow, "LEFT", (918,450) ,cv2. FONT_HERSHEY_SIMPLEX, 1, (255 ,255, 255) ,4)
+                cv2.rectangle (background, (1050,420), (1090,460), (255, 0, 0) ,cv2. FILLED)#created by Omkar_Kanse
+                cv2.putText (CameraWindow, "RIGHT" , (1058,450), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255),4)
+
+
+            def clicked1 (self) :#Masters-IT Omkar_Kanse
+                keyboard.press ('1')
+            def clicked2 (self) :
+                keyboard.press ('q')
+            def clicked3 (self):#Masters-IT Omkar_Kanse
+                keyboard.press ('a')
+            def clicked4 (self):
+                keyboard.press ('z')
+            def clicked5 (self):
+                keyboard.press ('2')#Masters-IT Omkar_Kanse
+            def clicked6 (self):
+                keyboard.press('w')
+            def clicked7 (self):
+                keyboard.press('s')
+            def clicked8 (self):#Masters-IT Omkar_Kanse
+                keyboard.press('x')
+            def clicked9 (self):
+                keyboard.press('3')
+            def clicked10 (self):
+                keyboard.press('e')#Masters-IT Omkar_Kanse
+            def clicked11 (self):
+                keyboard.press('d')
+            def clicked12 (self):
+                keyboard.press('c')
+            def clicked13 (self):
+                keyboard.press('4')#Masters-IT Omkar_Kanse
+            def clicked14 (self):
+                keyboard.press('r')
+            def clicked15 (self):
+                keyboard.press('f')
+            def clicked16 (self):
+                keyboard.press('v')
+            def clicked17 (self):
+                keyboard.press('5')#Masters-IT Omkar_Kanse
+            def clicked18 (self):
+                keyboard.press('t')
+            def clicked19 (self):
+                keyboard.press('g')
+            def clicked20 (self):
+                keyboard.press('b')
+            def clicked21 (self):#Masters-IT Omkar_Kanse
+                keyboard.press('6')
+            def clicked22 (self):
+                keyboard.press('y')
+            def clicked23 (self):
+                keyboard.press('h')#Masters-IT Omkar_Kanse
+            def clicked24 (self):
+                keyboard.press('n')
+            def clicked25 (self):
+                keyboard.press('7')
+            def clicked26 (self):
+                keyboard.press('u')
+            def clicked27 (self):
+                keyboard.press('j')
+            def clicked28 (self):#Masters-IT Omkar_Kanse
+                keyboard.press('m')
+            def clicked29 (self):
+                keyboard.press('8')
+            def clicked30 (self):
+                keyboard.press('i')
+            def clicked31 (self):
+                keyboard.press('k')
+            def clicked32 (self):
+                keyboard.press(',')
+            def clicked33 (self):#Masters-IT Omkar_Kanse
+                keyboard.press('9')
+            def clicked34 (self):
+                keyboard.press('o')
+            def clicked35 (self):
+                keyboard.press('l')
+            def clicked36 (self):
+                keyboard.press('.')#Masters-IT Omkar_Kanse
+            def clicked37 (self):
+                keyboard.press('0')
+            def clicked38 (self):
+                keyboard.press('p')
+            def clicked39 (self):#Masters-IT Omkar_Kanse
+                keyboard.press(';')
+            def clicked40 (self):
+                keyboard.press('/')
+
+            #space, caps-l, backspace ,enter rectangle
+            def clicked_cap(self):
+                pyautogui.press('capslock')#Masters-IT Omkar_Kanse
+            def clicked_spa (self):
+                pyautogui.press('space')
+            def clicked_bs (self):
+                pyautogui.press('backspace')#Masters-IT Omkar_Kanse
+            def clicked_en (self):
+                pyautogui.press('enter')
+                
+
+            #4 Button up, down, left, right
+            def clicked_up (self):
+                pyautogui.press('up')
+            def clicked_le (self):#Masters-IT Omkar_Kanse
+                pyautogui.press('left')
+            def clicked_ri (self):
+                pyautogui.press('right')
+            def clicked_do (self):#Masters-IT Omkar_Kanse
+                pyautogui.press('down')
+
+
+                
+            
+
+
+
+                
+        while True:
+            
+            success,CameraWindow= self.read() #read frame 
+            CameraWindow= cv2.flip(CameraWindow,1) #mirror
+            CameraWindow=cv2.resize(CameraWindow,(1200,900))
+            button1 = Button("1",(228,390))
+            button1.draw(CameraWindow)#Masters-IT Omkar_Kanse
+            button2 = Button("Q",(228,450))
+            button2.draw (CameraWindow)
+            button3 = Button("A",(228,510))
+            button3.draw (CameraWindow)
+            button4 = Button("Z",(228,570))
+            button4.draw(CameraWindow)
+            button5=Button("2",(298, 390))#Masters-IT Omkar_Kanse
+            button5.draw(CameraWindow)
+            button6=Button("W",(298,450))
+            button6.draw(CameraWindow)
+            button7=Button ("S", (298,510))
+            button7.draw(CameraWindow)
+            button8=Button ("X", (298,570))#Masters-IT Omkar_Kanse
+            button8.draw(CameraWindow)
+            button9=Button ("3", (368,390))
+            button9.draw(CameraWindow)
+            button10=Button ("E", (368,450))
+            button10.draw(CameraWindow)
+            button11=Button ("D", (368,510))
+            button11.draw(CameraWindow)
+            button12=Button ("C", (368,570))
+            button12.draw(CameraWindow)#Masters-IT Omkar_Kanse
+            button13=Button("4",(438,390))
+            button13.draw(CameraWindow)
+            button14=Button("R",(438,450))
+            button14.draw(CameraWindow)
+            button15=Button("F",(438,510))#Masters-IT Omkar_Kanse
+            button15.draw(CameraWindow)
+            button16=Button("V",(438,570))
+            button16.draw(CameraWindow)
+            button17=Button("5",(508,390))
+            button17.draw(CameraWindow)
+            button18=Button("T",(508,450))#Masters-IT Omkar_Kanse
+            button18.draw(CameraWindow)
+            button19=Button("G",(508,510))
+            button19.draw(CameraWindow)
+            button20=Button("B",(508,570))
+            button20.draw(CameraWindow)
+            button21=Button("6",(578,390))
+            button21.draw(CameraWindow)
+            button22=Button("Y",(578,450))#Masters-IT Omkar_Kanse
+            button22.draw(CameraWindow)
+            button23=Button("H",(578,510))
+            button23.draw(CameraWindow)
+            button24=Button("N",(578,570))
+            button24.draw(CameraWindow)
+            button25=Button("7",(648,390))
+            button25.draw(CameraWindow)
+            button26=Button("U",(648,450))
+            button26.draw(CameraWindow)
+            button27=Button("J",(648,510))#Masters-IT Omkar_Kanse
+            button27.draw(CameraWindow)
+            button28=Button("M",(648,570))
+            button28.draw(CameraWindow)
+            button29=Button("8",(718,390))
+            button29.draw(CameraWindow)#Masters-IT Omkar_Kanse
+            button30=Button("I",(718,450))
+            button30.draw(CameraWindow)
+            button31=Button("K",(718,510))#Masters-IT Omkar_Kanse
+            button31.draw(CameraWindow)
+            button32=Button(",",(718,570))
+            button32.draw(CameraWindow)
+            button33=Button("9",(788,390))
+            button33.draw(CameraWindow)
+            button34=Button("O",(788,450))#Masters-IT Omkar_Kanse
+            button34.draw(CameraWindow)
+            button35=Button("L",(788,510))
+            button35.draw(CameraWindow)#Masters-IT Omkar_Kanse
+            button36=Button(".",(788,570))
+            button36.draw(CameraWindow)
+            button37=Button("0",(858,390))#Masters-IT Omkar_Kanse
+            button37.draw(CameraWindow)
+            button38=Button("P",(858,450))
+            button38.draw(CameraWindow)
+            button39=Button(";",(858,510))#Masters-IT Omkar_Kanse
+            button39.draw(CameraWindow)
+            button40=Button("/",(858,570))
+            button40.draw(CameraWindow)
+
+
+            #space, caps-L, backspace,enter
+            button_cap=Button("Caps-L", (228, 570))#Masters-IT Omkar_Kanse
+            button_cap.draw(CameraWindow)
+            button_spa=Button ("SPACE", (378,570) )#Masters-IT Omkar_Kanse
+            button_spa.draw(CameraWindow)
+            button_bs=Button ("B-SPACE", (578,570) )#Masters-IT Omkar_Kanse
+            button_bs.draw(CameraWindow)
+            button_en=Button ("ENTER", (678,570) )#Masters-IT Omkar_Kanse
+            button_en.draw(CameraWindow)
+
+
+            #updownleftrightButtons
+            button_up = Button ("UP", (988,390) )#Masters-IT Omkar_Kanse
+            button_up.draw(CameraWindow)
+            button_le = Button ("LEFT", (918,450) )
+            button_le.draw(CameraWindow)#Masters-IT Omkar_Kanse
+            button_ri = Button ("RIGHT" , (1058,450) )
+            button_ri.draw(CameraWindow)
+            button_do= Button ("DOWN", (988, 510) )#Masters-IT Omkar_Kanse
+            button_do.draw(CameraWindow)
+            
+            
+ 
+            res = hand_obj.process(cv2.cvtColor(CameraWindow,cv2.COLOR_BGR2RGB))
+            
+            #Masters-IT Omkar_Kanse
+            
+            
+
+            if res.multi_hand_landmarks:#Masters-IT Omkar_Kanse
+                for hand_keyPoints in res.multi_hand_landmarks:
+                    cnt = count_fingers(hand_keyPoints)
+
+                    if cnt == 0:#Masters-IT Omkar_Kanse
+                        continue
+                    
+
+                    drawing.draw_landmarks(CameraWindow,hand_keyPoints, hands.HAND_CONNECTIONS)
+                    
+                    x1, y1 = int(hand_keyPoints.landmark[4].x * CameraWindow.shape[1]),int(hand_keyPoints.landmark[4].y* CameraWindow.shape[0])
+                    x2, y2 = int(hand_keyPoints.landmark[8].x * CameraWindow.shape[1]),int(hand_keyPoints.landmark[8].y*CameraWindow .shape[0])
+                    x3, y3 = int(hand_keyPoints.landmark[12].x * CameraWindow.shape[1]),int(hand_keyPoints.landmark[12].y* CameraWindow.shape[0])
+                    x4, y4 = int(hand_keyPoints.landmark[16].x *CameraWindow.shape[1]),int(hand_keyPoints.landmark[16].y* CameraWindow.shape[0])
+                    x5, y5 = int(hand_keyPoints.landmark[20].x *CameraWindow.shape[1]),int(hand_keyPoints.landmark[20].y* CameraWindow.shape[0])
+                    # Draw a filled circle around the index finger tip
+                    cv2.circle( CameraWindow, (x1, y1), 10,(0, 255, 0),cv2.FILLED)
+                    cv2.circle( CameraWindow, (x2, y2), 10,(0, 255, 0),cv2.FILLED)
+                    cv2.circle( CameraWindow, (x3, y3), 10,(0, 255, 0),cv2.FILLED)
+                    cv2.circle( CameraWindow, (x4, y4), 10,(0, 255, 0),cv2.FILLED)#Masters-IT Omkar_Kanse
+                    cv2.circle( CameraWindow, (x5, y5), 10,(0, 255, 0),cv2.FILLED)
+
+                    
+
+
+                    
+
+                    #1 column
+                    if 220<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=260 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (220,300),(260,340),( 0,255, 0), cv2.FILLED)#Masters-IT Omkar_Kanse
+                            if 220<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=260 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button1.clicked1()
+                                time.sleep(2)
+                    if 220<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=260 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:#Masters-IT Omkar_Kanse
+                            cv2. rectangle (CameraWindow, (220,360),(260,400),( 0,255, 0), cv2.FILLED)
+                            if 220<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=260 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button2.clicked2()
+                                time.sleep(2)
+                    if 220<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=260 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (220,420),(260,460),( 0,255, 0), cv2.FILLED)
+                            if 220<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=260 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button3.clicked3()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                    if 220<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=260 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (220,480),(260,520),( 0,255, 0), cv2.FILLED)#Masters-IT Omkar_Kanse
+                            if 220<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=260 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button4.clicked4()
+                                time.sleep(2)
+
+                    #2 column
+                    if 290<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=330 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:#Masters-IT Omkar_Kanse
+                            cv2. rectangle (CameraWindow, (290,300),(330,340),( 0,255, 0), cv2.FILLED)
+                            if 290<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=330 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button5.clicked5()
+                                time.sleep(2)
+                    if 290<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=330 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (290,360),(330,400),( 0,255, 0), cv2.FILLED)
+                            if 290<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=330 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button6.clicked6()#Masters-IT Omkar_Kanse
+                                time.sleep(2)
+                    if 290<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=330 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (290,420),(330,460),( 0,255, 0), cv2.FILLED)
+                            if 290<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=330 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button7.clicked7()
+                                time.sleep(2)
+                    if 290<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=330 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (290,480),(330,520),( 0,255, 0), cv2.FILLED)
+                            if 290<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=330 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button8.clicked8()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+
+                    #3 column
+                    if 360<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=400 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (360,300),(400,340),( 0,255, 0), cv2.FILLED)
+                            if 360<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=400 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button9.clicked9()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                    if 360<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=400 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (360,360),(400,400),( 0,255, 0), cv2.FILLED)
+                            if 360<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=400 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button10.clicked10()
+                                time.sleep(2)
+                    if 360<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=400 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (360,420),(400,460),( 0,255, 0), cv2.FILLED)
+                            if 360<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=400 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button11.clicked11()
+                                time.sleep(2)
+                    if 360<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=400 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (360,480),(400,520),( 0,255, 0), cv2.FILLED)
+                            if 360<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=400 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button12.clicked12()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+
+                    #4 column
+                    if 430<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=470 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (430,300),(470,340),( 0,255, 0), cv2.FILLED)
+                            if 430<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=470 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button13.clicked13()
+                                time.sleep(2)
+                    if 430<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=470 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (430,360),(470,400),( 0,255, 0), cv2.FILLED)
+                            if 430<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=470 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button14.clicked14()#Masters-IT Omkar_Kanse
+                                time.sleep(2)
+                    if 430<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=470 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (430,420),(470,460),( 0,255, 0), cv2.FILLED)
+                            if 430<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=470 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button15.clicked15()
+                                time.sleep(2)
+                    if 430<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=470 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (430,480),(470,520),( 0,255, 0), cv2.FILLED)
+                            if 430<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=470 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button16.clicked16()
+                                time.sleep(2)
+                    #5 column#Masters-IT Omkar_Kanse
+                    if 500<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=540 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (500,300),(540,340),( 0,255, 0), cv2.FILLED)
+                            if 500<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=540 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button17.clicked17()
+                                time.sleep(2)
+                    if 500<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=540 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:#Masters-IT Omkar_Kanse
+                            cv2. rectangle (CameraWindow, (500,360),(540,400),( 0,255, 0), cv2.FILLED)
+                            if 500<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=540 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button18.clicked18()
+                                time.sleep(2)
+                    if 500<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=540 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (500,420),(540,460),( 0,255, 0), cv2.FILLED)
+                            if 500<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=540 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button19.clicked19()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                    if 500<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=540 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (500,480),(540,520),( 0,255, 0), cv2.FILLED)
+                            if 500<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=540 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button20.clicked20()
+                                time.sleep(2)
+
+                    #6 column
+                    if 570<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=610 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (570,300),(610,340),( 0,255, 0), cv2.FILLED)
+                            if 570<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=610 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button21.clicked21()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                    if 570<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=610 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (570,360),(610,400),( 0,255, 0), cv2.FILLED)
+                            if 570<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=610 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button22.clicked22()
+                                time.sleep(2)
+                    if 570<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=610 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (570,420),(610,460),( 0,255, 0), cv2.FILLED)
+                            if 570<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=610 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button23.clicked23()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                    if 570<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=610 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (570,480),(610,520),( 0,255, 0), cv2.FILLED)
+                            if 570<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=610 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button24.clicked24()
+                                time.sleep(2)
+
+                    #7 column
+                    if 640<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=680 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (640,300),(680,340),( 0,255, 0), cv2.FILLED)
+                            if 640<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=680 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button25.clicked25()#Masters-IT Omkar_Kanse
+                                time.sleep(2)
+                    if 640<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=680 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (640,360),(680,400),( 0,255, 0), cv2.FILLED)
+                            if 640<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=680 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button26.clicked26()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                    if 640<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=680 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (640,420),(680,460),( 0,255, 0), cv2.FILLED)
+                            if 640<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=680 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button27.clicked27()
+                                time.sleep(2)
+                    if 640<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=680 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (640,480),(680,520),( 0,255, 0), cv2.FILLED)
+                            if 640<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=680 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button28.clicked28()#Masters-IT Omkar_Kanse
+                                time.sleep(2)
+                    #8 column
+                    if 710<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=750 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (710,300),(750,340),( 0,255, 0), cv2.FILLED)
+                            if 710<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=750 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button29.clicked29()
+                                time.sleep(2)
+                    if 710<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=750 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (710,360),(750,400),( 0,255, 0), cv2.FILLED)
+                            if 710<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=750 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button30.clicked30()
+                                time.sleep(2)
+                    if 710<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=750 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (710,420),(750,460),( 0,255, 0), cv2.FILLED)
+                            if 710<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=750 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button31.clicked31()#Masters-IT Omkar_Kanse
+                                time.sleep(2)
+                    if 710<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=750 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (710,480),(750,520),( 0,255, 0), cv2.FILLED)
+                            if 710<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=750 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button32.clicked32()
+                                time.sleep(2)
+
+                    #9 column
+                    if 780<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=820 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (780,300),(820,340),( 0,255, 0), cv2.FILLED)
+                            if 780<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=820 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button33.clicked33()
+                                time.sleep(2)
+                    if 780<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=820 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (780,360),(820,400),( 0,255, 0), cv2.FILLED)
+                            if 780<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=820 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button34.clicked34()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                    if 780<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=820 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (780,420),(820,460),( 0,255, 0), cv2.FILLED)
+                            if 780<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=820 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button35.clicked35()
+                                time.sleep(2)
+                    if 780<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=820 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (780,480),(820,520),( 0,255, 0), cv2.FILLED)
+                            if 780<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=820 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button36.clicked36()#Masters-IT Omkar_Kanse
+                                time.sleep(2)
+
+                    #10 column
+                    if 850<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=890 and 300<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=340:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (850,300),(890,340),( 0,255, 0), cv2.FILLED)
+                            if 850<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=890 and 300<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=340:
+                                button37.clicked37()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                    if 850<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=890 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (850,360),(890,400),( 0,255, 0), cv2.FILLED)
+                            if 850<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=890 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button38.clicked38()
+                                time.sleep(2)
+                    if 850<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=890 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:#Masters-IT Omkar_Kanse
+                            cv2. rectangle (CameraWindow, (850,420),(890,460),( 0,255, 0), cv2.FILLED)
+                            if 850<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=890 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button39.clicked39()
+                                time.sleep(2)
+                    if 850<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=890 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (850,480),(890,520),( 0,255, 0), cv2.FILLED)
+                            if 850<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=890 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button40.clicked40()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+
+
+                     #space,caps-l,bspace,enter
+                    if 220<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=350 and 540<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=580:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (220,540),(350,580),( 0,255, 0), cv2.FILLED)
+                            if 220<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=350 and 540<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=580:
+                                button_cap.clicked_cap()
+                                time.sleep(2)
+                    if 370<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=500 and 540<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=580:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (370,540),(500,580),( 0,255, 0), cv2.FILLED)
+                            if 370<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=500 and 540<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=580:
+                                button_spa.clicked_spa()
+                                time.sleep(2)
+                    if 520<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=650 and 540<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=580:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:#Masters-IT Omkar_Kanse
+                            cv2. rectangle (CameraWindow, (520,540),(650,580),( 0,255, 0), cv2.FILLED)
+                            if 520<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=650 and 540<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=580:
+                                button_bs.clicked_bs()
+                                time.sleep(2)
+                    if 670<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=800 and 540<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=580:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (670,540),(800,580),( 0,255, 0), cv2.FILLED)
+                            if 670<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=800 and 540<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=580:
+                                button_en.clicked_en()#Masters-IT Omkar_Kanse
+                                time.sleep(2)
+
+
+                     #4Button up,down,left,right
+                    if 980<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=1010 and 360<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=400:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (980,360),(1010,400),( 0,255, 0), cv2.FILLED)
+                            if 980<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=890 and 360<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=400:
+                                button_up.clicked_up()
+                                time.sleep(2)
+                    if 980<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=1010 and 480<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=520:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (850,480),(1010,520),( 0,255, 0), cv2.FILLED)
+                            if 980<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=1010 and 480<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=520:
+                                button_do.clicked_do()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                    if 910<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=950 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (910,420),(950,460),( 0,255, 0), cv2.FILLED)
+                            if 910<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=950 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button_le.clicked_le()
+                                time.sleep(2)
+                    if 1050<=hand_keyPoints.landmark [8].x*CameraWindow.shape[1]<=1090 and 420<=hand_keyPoints.landmark [8].y*CameraWindow.shape[0]<=460:
+                        if cnt==2 and len (res.multi_hand_landmarks)==1:
+                            cv2. rectangle (CameraWindow, (1050,420),(1090,460),( 0,255, 0), cv2.FILLED)
+                            if 1050<=hand_keyPoints.landmark[12].x*CameraWindow.shape[1]<=1090 and 420<=hand_keyPoints.landmark[12].y*CameraWindow.shape[0]<=460:
+                                button_ri.clicked_ri()
+                                time.sleep(2)#Masters-IT Omkar_Kanse
+                
+                        
+                    elif cnt == 3 and len(res.multi_hand_landmarks)==1:#Masters-IT Omkar_Kanse
+                        move_cursor(res.multi_hand_landmarks[0])
+                        text = 'Mouse Cursor'
+                        font = cv2.FONT_HERSHEY_SIMPLEX
+                        cv2.putText(CameraWindow,text,(40,40),font,1,(255,255,255),2)
+                    elif cnt == 4 and len(res.multi_hand_landmarks)==1:
+                        pyautogui.click()
+                        text = 'Mouse Click'
+                        font = cv2.FONT_HERSHEY_SIMPLEX#Masters-IT Omkar_Kanse
+                        cv2.putText(CameraWindow,text,(40,40),font,1,(255,255,255),2)
+
+        #Masters-IT Omkar_Kanse
+                        
+        #Masters-IT Omkar_Kanse
+                        
+            
+            cv2.imshow("OpenCamera",CameraWindow)
+            
+
+            if cv2.waitKey(1) == 27:
+                cv2.destroyAllWindows()
+                break
+            
+        
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    CameraWindow = QtWidgets.QMainWindow()#Masters-IT Omkar_Kanse
+    ui = Ui_Window_media_program()
+    ui.setupUi(CameraWindow)#Masters-IT Omkar_Kanse
+    CameraWindow.show()#Masters-IT Omkar_Kanse
+    sys.exit(app.exec_())
